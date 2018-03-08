@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,10 +79,21 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
     }
 
     private void initRecyclerView() {
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), getResources().getInteger(R.integer.movie_list_columns));
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), getNumberOfColumns());
         movieListRecyclerView.setLayoutManager(layoutManager);
         adapter = new MovieListAdapter(getContext(), mMovieListPresenter.getMovieList(), mIMovieListContract);
         movieListRecyclerView.setAdapter((RecyclerView.Adapter) adapter);
+    }
+
+    private int getNumberOfColumns() {
+        if(getActivity() != null) {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int width = displayMetrics.widthPixels;
+            int columns = width / getResources().getInteger(R.integer.width_divider);
+            if (columns >= 2) return columns;
+        }
+        return 2;
     }
 
     @Override

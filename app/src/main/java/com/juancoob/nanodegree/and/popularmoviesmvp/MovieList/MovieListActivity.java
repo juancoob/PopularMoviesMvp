@@ -70,13 +70,13 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.popular_movies:
-                mMovieListPresenter.setOptionSelected("popular");
+                mMovieListPresenter.setOptionSelected(Constants.POPULAR);
                 mMovieListFragment.showProgressBar();
                 mMovieListPresenter.fetchMovies();
                 showOption(Constants.POPULAR);
                 break;
             case R.id.top_rated:
-                mMovieListPresenter.setOptionSelected("top");
+                mMovieListPresenter.setOptionSelected(Constants.TOP);
                 mMovieListFragment.showProgressBar();
                 mMovieListPresenter.fetchMovies();
                 showOption(Constants.TOP);
