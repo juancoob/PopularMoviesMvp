@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.juancoob.nanodegree.and.popularmoviesmvp.MovieList.IMovieListContract;
+import com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieList.IMovieListContract;
 import com.juancoob.nanodegree.and.popularmoviesmvp.R;
-import com.juancoob.nanodegree.and.popularmoviesmvp.model.Movie;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.ActivityUtils;
 import com.squareup.picasso.Picasso;
 
@@ -30,9 +30,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     private final Context mCtx;
     private final IMovieListContract mIMovieListContract;
 
-    public MovieListAdapter(Context context, ArrayList<Movie> movieList, IMovieListContract movieListContract) {
+    public MovieListAdapter(Context context, IMovieListContract movieListContract) {
         mCtx = context;
-        mMovieList = movieList;
         mIMovieListContract = movieListContract;
     }
 

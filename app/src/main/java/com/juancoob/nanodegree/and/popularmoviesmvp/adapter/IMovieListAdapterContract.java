@@ -1,6 +1,6 @@
 package com.juancoob.nanodegree.and.popularmoviesmvp.adapter;
 
-import com.juancoob.nanodegree.and.popularmoviesmvp.model.Movie;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
 
 import java.util.ArrayList;
 

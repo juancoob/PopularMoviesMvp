@@ -1,6 +1,6 @@
-package com.juancoob.nanodegree.and.popularmoviesmvp.REST;
+package com.juancoob.nanodegree.and.popularmoviesmvp.repository.REST;
 
-import com.juancoob.nanodegree.and.popularmoviesmvp.model.MovieResponse;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.MovieResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

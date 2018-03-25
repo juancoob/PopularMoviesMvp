@@ -1,4 +1,4 @@
-package com.juancoob.nanodegree.and.popularmoviesmvp.MovieList;
+package com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieList;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,12 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.juancoob.nanodegree.and.popularmoviesmvp.MovieList.IMovieListContract;
-import com.juancoob.nanodegree.and.popularmoviesmvp.MovieList.MovieListFragment;
-import com.juancoob.nanodegree.and.popularmoviesmvp.MovieList.MovieListPresenter;
-import com.juancoob.nanodegree.and.popularmoviesmvp.MovieDetail.MovieDetailActivity;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.executor.impl.ThreadExecutor;
+import com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieDetail.MovieDetailActivity;
 import com.juancoob.nanodegree.and.popularmoviesmvp.R;
-import com.juancoob.nanodegree.and.popularmoviesmvp.model.Movie;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
+import com.juancoob.nanodegree.and.popularmoviesmvp.repository.MoviesRepository;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.threading.impl.MainThreadImpl;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.ActivityUtils;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.Constants;
 
@@ -20,12 +20,20 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
     private MovieListFragment mMovieListFragment;
     private MovieListPresenter mMovieListPresenter;
     private Menu mMenu;
-    private String mOptionSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_list);
+
+        String mChosenOption;
+
+        // If it loaded movies, it'll retrieve them
+        if (savedInstanceState != null) {
+            mChosenOption = savedInstanceState.getString(Constants.MOVIE_OPTION);
+        } else {
+            mChosenOption = Constants.POPULAR;
+        }
 
         mMovieListFragment = (MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (mMovieListFragment == null) {
@@ -35,23 +43,31 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
         }
 
         // Create the movie list presenter
-        mMovieListPresenter = new MovieListPresenter(mMovieListFragment);
-        mMovieListFragment.setPresenter(mMovieListPresenter);
+        mMovieListPresenter = new MovieListPresenter(
+                mMovieListFragment,
+                ThreadExecutor.getInstance(),
+                MainThreadImpl.getInstane(),
+                new MoviesRepository(),
+                mChosenOption);
 
-        // If it loaded movies, it'll retrieve them
-        if (savedInstanceState != null) {
-            mMovieListPresenter.setMovieList(savedInstanceState.<Movie>getParcelableArrayList(Constants.MOVIE_LIST));
-            mMovieListPresenter.setOptionSelected(savedInstanceState.getString(Constants.MOVIE_OPTION));
-            mOptionSelected = savedInstanceState.getString(Constants.MOVIE_OPTION);
-        }
+        mMovieListFragment.setPresenter(mMovieListPresenter);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(Constants.MOVIE_LIST, mMovieListPresenter.getMovieList());
-        outState.putString(Constants.MOVIE_OPTION, mMovieListPresenter.getOptionSelected());
         super.onSaveInstanceState(outState);
+        outState.putString(Constants.MOVIE_OPTION, mMovieListPresenter.getChosenOption());
     }
+
+    @Override
+    public void onClickListener(Movie movie) {
+        Intent intent = new Intent(this, MovieDetailActivity.class);
+        intent.putExtra(Constants.MOVIE_DETAIL, movie);
+        startActivity(intent);
+    }
+
+
+    //TODO CHANGE TO VIEWPAGER
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -62,7 +78,7 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        showOption(mOptionSelected);
+        showOption(mMovieListPresenter.getChosenOption());
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -70,15 +86,17 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.popular_movies:
-                mMovieListPresenter.setOptionSelected(Constants.POPULAR);
-                mMovieListFragment.showProgressBar();
-                mMovieListPresenter.fetchMovies();
+                mMovieListPresenter.setChosenOption(Constants.POPULAR);
+                mMovieListFragment.hideErrorTextAndButton();
+                mMovieListFragment.showProgress();
+                mMovieListPresenter.resume();
                 showOption(Constants.POPULAR);
                 break;
             case R.id.top_rated:
-                mMovieListPresenter.setOptionSelected(Constants.TOP);
-                mMovieListFragment.showProgressBar();
-                mMovieListPresenter.fetchMovies();
+                mMovieListPresenter.setChosenOption(Constants.TOP);
+                mMovieListFragment.hideErrorTextAndButton();
+                mMovieListFragment.showProgress();
+                mMovieListPresenter.resume();
                 showOption(Constants.TOP);
                 break;
         }
@@ -93,12 +111,5 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
             mMenu.findItem(R.id.top_rated_label).setVisible(true);
             mMenu.findItem(R.id.popular_movies_label).setVisible(false);
         }
-    }
-
-    @Override
-    public void onClickListener(Movie movie) {
-        Intent intent = new Intent(this, MovieDetailActivity.class);
-        intent.putExtra(Constants.MOVIE_DETAIL, movie);
-        startActivity(intent);
     }
 }

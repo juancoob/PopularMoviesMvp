@@ -1,4 +1,4 @@
-package com.juancoob.nanodegree.and.popularmoviesmvp.model;
+package com.juancoob.nanodegree.and.popularmoviesmvp.domain.model;
 
 import com.google.gson.annotations.SerializedName;
 

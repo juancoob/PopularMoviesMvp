@@ -1,4 +1,4 @@
-package com.juancoob.nanodegree.and.popularmoviesmvp.MovieDetail;
+package com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieDetail;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,7 +12,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.juancoob.nanodegree.and.popularmoviesmvp.R;
-import com.juancoob.nanodegree.and.popularmoviesmvp.model.Movie;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.ActivityUtils;
 import com.squareup.picasso.Picasso;
 

@@ -1,11 +1,11 @@
-package com.juancoob.nanodegree.and.popularmoviesmvp.MovieDetail;
+package com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieDetail;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.juancoob.nanodegree.and.popularmoviesmvp.R;
-import com.juancoob.nanodegree.and.popularmoviesmvp.model.Movie;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.ActivityUtils;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.Constants;
 
@@ -34,9 +34,11 @@ public class MovieDetailActivity extends AppCompatActivity {
             mMovieDetailFragment = MovieDetailFragment.getInstance();
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mMovieDetailFragment, R.id.contentFrame);
         }
+
         if(intent.hasExtra(Constants.MOVIE_DETAIL)) {
             mMovieDetailFragment.setMovie((Movie) intent.getParcelableExtra(Constants.MOVIE_DETAIL));
         }
+
         if (savedInstanceState != null) {
             mMovieDetailFragment.setMovie((Movie) savedInstanceState.getParcelable(Constants.MOVIE));
         }

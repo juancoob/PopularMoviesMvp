@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.juancoob.nanodegree.and.popularmoviesmvp.MovieList.MovieListActivity">
+        <activity android:name="com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieList.MovieListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,12 +22,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MovieDetail.MovieDetailActivity"
-            android:parentActivityName=".MovieList.MovieListActivity"
+            android:name=".presentation.MovieDetail.MovieDetailActivity"
+            android:parentActivityName=".presentation.MovieList.MovieListActivity"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MovieList.MovieListActivity" />
+                android:value=".presentation.MovieList.MovieListActivity" />
         </activity>
     </application>
 

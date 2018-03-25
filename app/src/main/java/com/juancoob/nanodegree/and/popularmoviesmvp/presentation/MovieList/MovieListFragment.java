@@ -1,4 +1,4 @@
-package com.juancoob.nanodegree.and.popularmoviesmvp.MovieList;
+package com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieList;
 
 
 import android.content.Context;
@@ -12,18 +12,20 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.juancoob.nanodegree.and.popularmoviesmvp.R;
 import com.juancoob.nanodegree.and.popularmoviesmvp.adapter.IMovieListAdapterContract;
 import com.juancoob.nanodegree.and.popularmoviesmvp.adapter.MovieListAdapter;
-import com.juancoob.nanodegree.and.popularmoviesmvp.model.Movie;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by Juan Antonio Cobos Obrero on 18/02/18.
@@ -36,6 +38,12 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
 
     @BindView(R.id.pb_movie)
     public ProgressBar movieProgressBar;
+
+    @BindView(R.id.tv_no_internet_nor_api_key)
+    public TextView noInternetNorApiKeyTextView;
+
+    @BindView(R.id.btn_retry)
+    public Button retryButton;
 
     private IMovieListAdapterContract adapter;
     private IMovieListContract.Presenter mMovieListPresenter;
@@ -66,22 +74,20 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
         if(getActivity() != null) {
             getActivity().setTitle(getResources().getString(R.string.app_name));
         }
-        ArrayList<Movie> mMovieList = mMovieListPresenter.getMovieList();
-        initRecyclerView();
-        showProgressBar();
-        if (mMovieList.size() == 0) {
-            mMovieListPresenter.fetchMovies();
-        } else {
-            hideProgressBar();
-            ((RecyclerView.Adapter)adapter).notifyDataSetChanged();
-        }
 
+        initRecyclerView();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMovieListPresenter.resume();
     }
 
     private void initRecyclerView() {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), getNumberOfColumns());
         movieListRecyclerView.setLayoutManager(layoutManager);
-        adapter = new MovieListAdapter(getContext(), mMovieListPresenter.getMovieList(), mIMovieListContract);
+        adapter = new MovieListAdapter(getContext(), mIMovieListContract);
         movieListRecyclerView.setAdapter((RecyclerView.Adapter) adapter);
     }
 
@@ -98,22 +104,7 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
 
     @Override
     public void showMovieList(ArrayList<Movie> movieList) {
-        hideProgressBar();
         adapter.updateMovieList(movieList);
-    }
-
-    @Override
-    public void showToast(int messageId) {
-        Toast.makeText(getContext(), getString(messageId), Toast.LENGTH_LONG).show();
-    }
-
-    public void showProgressBar() {
-        movieProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideProgressBar() {
-        movieProgressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -129,4 +120,42 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
         super.onDetach();
         mIMovieListContract = null;
     }
+
+    @Override
+    public void showProgress() {
+        movieProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgress() {
+        movieProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void noInternetConnection() {
+        // Empty the list and show the message
+        adapter.updateMovieList(new ArrayList<Movie>());
+        noInternetNorApiKeyTextView.setVisibility(View.VISIBLE);
+        noInternetNorApiKeyTextView.setText(getString(R.string.no_internet));
+        retryButton.setVisibility(View.VISIBLE);
+    }
+
+    @OnClick(R.id.btn_retry)
+    public void onRetryButtonClick() {
+        mMovieListPresenter.resume();
+        hideErrorTextAndButton();
+    }
+
+    @Override
+    public void showApiKeyError() {
+        noInternetNorApiKeyTextView.setVisibility(View.VISIBLE);
+        noInternetNorApiKeyTextView.setText(getString(R.string.no_api_key));
+    }
+
+    @Override
+    public void hideErrorTextAndButton() {
+        noInternetNorApiKeyTextView.setVisibility(View.GONE);
+        retryButton.setVisibility(View.GONE);
+    }
+
 }
