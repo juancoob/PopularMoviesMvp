@@ -14,4 +14,6 @@
     <string name="default_image_size">w185</string>
     <string name="calendar_icon">calendar icon</string>
     <string name="no_api_key">Did you added your API KEY correctly?</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="retry">Retry again?</string>
 </resources>
