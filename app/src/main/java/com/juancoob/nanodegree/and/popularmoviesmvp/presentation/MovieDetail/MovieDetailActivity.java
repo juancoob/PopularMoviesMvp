@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.juancoob.nanodegree.and.popularmoviesmvp.R;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.executor.impl.ThreadExecutor;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.threading.impl.MainThreadImpl;
+import com.juancoob.nanodegree.and.popularmoviesmvp.repository.MoviesRepository;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.ActivityUtils;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.Constants;
 
@@ -16,6 +19,7 @@ import com.juancoob.nanodegree.and.popularmoviesmvp.util.Constants;
 public class MovieDetailActivity extends AppCompatActivity {
 
     private MovieDetailFragment mMovieDetailFragment;
+    private MovieDetailPresenter mMovieDetailPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +40,17 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
 
         if(intent.hasExtra(Constants.MOVIE_DETAIL)) {
-            mMovieDetailFragment.setMovie((Movie) intent.getParcelableExtra(Constants.MOVIE_DETAIL));
+            Movie movie = intent.getParcelableExtra(Constants.MOVIE_DETAIL);
+            mMovieDetailFragment.setMovie(movie);
+
+            mMovieDetailPresenter = new MovieDetailPresenter(
+                    mMovieDetailFragment,
+                    ThreadExecutor.getInstance(),
+                    MainThreadImpl.getInstane(),
+                    new MoviesRepository(),
+                    movie.getMovieId());
+
+            mMovieDetailFragment.setPresenter(mMovieDetailPresenter);
         }
 
         if (savedInstanceState != null) {
