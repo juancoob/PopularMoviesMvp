@@ -1,4 +1,4 @@
-package com.juancoob.nanodegree.and.popularmoviesmvp.adapter;
+package com.juancoob.nanodegree.and.popularmoviesmvp.adapter.impl;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.juancoob.nanodegree.and.popularmoviesmvp.adapter.IMovieListAdapterContract;
 import com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieList.IMovieListContract;
 import com.juancoob.nanodegree.and.popularmoviesmvp.R;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
@@ -56,7 +57,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         String[] releaseDate = movie.getReleaseDate().split("-");
         holder.movieTitleTextView.setText(movie.getTitle());
         holder.movieDateTextView.setText(releaseDate[0]);
-        Picasso.with(mCtx).load(ActivityUtils.getImageUri(movie.getImagePath(), mCtx))
+        Picasso.with(mCtx).load(ActivityUtils.getImageUri(movie.getImagePath()))
                 .placeholder(R.drawable.ic_tmdb_logo)
                 .into(holder.moviePosterImageView);
     }
