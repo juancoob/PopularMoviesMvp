@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.juancoob.nanodegree.and.popularmoviesmvp.R;
 import com.juancoob.nanodegree.and.popularmoviesmvp.adapter.IMovieListAdapterContract;
-import com.juancoob.nanodegree.and.popularmoviesmvp.adapter.MovieListAdapter;
+import com.juancoob.nanodegree.and.popularmoviesmvp.adapter.impl.MovieListAdapter;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
     @BindView(R.id.btn_retry)
     public Button retryButton;
 
-    private IMovieListAdapterContract adapter;
+    private IMovieListAdapterContract mAdapter;
     private IMovieListContract.Presenter mMovieListPresenter;
     private IMovieListContract mIMovieListContract;
 
@@ -87,8 +87,8 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
     private void initRecyclerView() {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), getNumberOfColumns());
         movieListRecyclerView.setLayoutManager(layoutManager);
-        adapter = new MovieListAdapter(getContext(), mIMovieListContract);
-        movieListRecyclerView.setAdapter((RecyclerView.Adapter) adapter);
+        mAdapter = new MovieListAdapter(getContext(), mIMovieListContract);
+        movieListRecyclerView.setAdapter((RecyclerView.Adapter) mAdapter);
     }
 
     private int getNumberOfColumns() {
@@ -104,7 +104,7 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
 
     @Override
     public void showMovieList(ArrayList<Movie> movieList) {
-        adapter.updateMovieList(movieList);
+        mAdapter.updateMovieList(movieList);
     }
 
     @Override
@@ -134,7 +134,7 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
     @Override
     public void noInternetConnection() {
         // Empty the list and show the message
-        adapter.updateMovieList(new ArrayList<Movie>());
+        mAdapter.updateMovieList(new ArrayList<Movie>());
         noInternetNorApiKeyTextView.setVisibility(View.VISIBLE);
         noInternetNorApiKeyTextView.setText(getString(R.string.no_internet));
         retryButton.setVisibility(View.VISIBLE);
