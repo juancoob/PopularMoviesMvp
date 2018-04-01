@@ -57,7 +57,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         String[] releaseDate = movie.getReleaseDate().split("-");
         holder.movieTitleTextView.setText(movie.getTitle());
         holder.movieDateTextView.setText(releaseDate[0]);
-        Picasso.with(mCtx).load(ActivityUtils.getImageUri(movie.getImagePath()))
+        Picasso.with(mCtx).load(ActivityUtils.getMovieImageUri(movie.getImagePath()))
                 .placeholder(R.drawable.ic_tmdb_logo)
                 .into(holder.moviePosterImageView);
     }
