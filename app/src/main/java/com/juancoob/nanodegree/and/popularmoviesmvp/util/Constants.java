@@ -15,10 +15,11 @@ public class Constants {
     public static final String MOVIE_BD_URL = "https://api.themoviedb.org/3/";
     public static final String MOVIE_DB_BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     public static final String MOVIE_DB_DEFAULT_IMAGE_SIZE = "w185";
-    public static final String YOUTUBE_VIDEO_BASE_URL = "https://www.youtube.com/watch?v=";
+    public static final String YOUTUBE_VIDEO_BASE_URL = "https://www.youtube.com/watch";
+    public static final String YOUTUBE_VIDEO_V = "v";
     public static final String YOUTUBE_VIDEO_BASE_IMAGE_URL = "https://img.youtube.com/vi/";
-    public static final String YOUTUBE_VIDEO_DEFAULT_IMAGE = "/mqdefault.jpg";
-    public static final String YOUTUBE = "youtube";
+    public static final String YOUTUBE_VIDEO_DEFAULT_IMAGE = "mqdefault.jpg";
+    public static final String YOUTUBE = "YouTube";
     public static final String POPULAR = "popular";
     public static final String TOP = "top";
     public static final int CORE_POOL_SIZE = 3;

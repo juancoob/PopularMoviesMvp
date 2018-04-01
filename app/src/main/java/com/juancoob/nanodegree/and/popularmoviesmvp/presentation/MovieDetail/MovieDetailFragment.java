@@ -1,5 +1,6 @@
 package com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieDetail;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,8 +18,10 @@ import android.widget.TextView;
 
 import com.juancoob.nanodegree.and.popularmoviesmvp.R;
 import com.juancoob.nanodegree.and.popularmoviesmvp.adapter.impl.MovieReviewAdapter;
+import com.juancoob.nanodegree.and.popularmoviesmvp.adapter.impl.MovieVideoAdapter;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Review;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Video;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.ActivityUtils;
 import com.squareup.picasso.Picasso;
 
@@ -55,6 +58,15 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
     @BindView(R.id.rv_movie_reviews)
     public RecyclerView movieReviewsRecyclerView;
 
+    @BindView(R.id.tv_video_label)
+    public TextView videoLabelTextView;
+
+    @BindView(R.id.pb_movie_videos)
+    public ProgressBar movieVideosProgressBar;
+
+    @BindView(R.id.rv_movie_videos)
+    public RecyclerView movieVideosRecyclerView;
+
     @BindView(R.id.pb_movie_reviews)
     public ProgressBar movieReviewsProgressBar;
 
@@ -66,7 +78,9 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
 
     private Movie mMovie;
     private MovieDetailPresenter mMovieDetailPresenter;
-    private MovieReviewAdapter mAdapter;
+    private MovieReviewAdapter mMovieReviewAdapter;
+    private MovieVideoAdapter mMovieVideoAdapter;
+    private IMovieDetailContract mIMovieDetailContract;
 
     public static MovieDetailFragment getInstance() {
         return new MovieDetailFragment();
@@ -109,15 +123,20 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
         movieAverageRattingBar.setRating(Float.parseFloat(mMovie.getVoteAverage()));
 
         Picasso.with(getContext()).load(ActivityUtils
-                .getImageUri(mMovie.getImagePath()))
+                .getMovieImageUri(mMovie.getImagePath()))
                 .into(moviePosterImageView);
     }
 
     private void initializeRecyclerViews() {
-        LinearLayoutManager manager = new LinearLayoutManager(getContext());
-        movieReviewsRecyclerView.setLayoutManager(manager);
-        mAdapter = new MovieReviewAdapter(getContext());
-        movieReviewsRecyclerView.setAdapter(mAdapter);
+        LinearLayoutManager reviewsManager = new LinearLayoutManager(getContext());
+        movieReviewsRecyclerView.setLayoutManager(reviewsManager);
+        mMovieReviewAdapter = new MovieReviewAdapter(getContext());
+        movieReviewsRecyclerView.setAdapter(mMovieReviewAdapter);
+
+        LinearLayoutManager videoManager = new LinearLayoutManager(getContext());
+        movieVideosRecyclerView.setLayoutManager(videoManager);
+        mMovieVideoAdapter = new MovieVideoAdapter(getContext(), mIMovieDetailContract);
+        movieVideosRecyclerView.setAdapter(mMovieVideoAdapter);
     }
 
     @Override
@@ -129,16 +148,23 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
     @Override
     public void showProgress() {
         movieReviewsProgressBar.setVisibility(View.VISIBLE);
+        movieVideosProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideProgress() {
         movieReviewsProgressBar.setVisibility(View.GONE);
+        movieVideosProgressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void showMovieReviews(ArrayList<Review> reviews) {
-        mAdapter.updateMovieReviews(reviews);
+        mMovieReviewAdapter.updateMovieReviews(reviews);
+    }
+
+    @Override
+    public void showMovieVideos(ArrayList<Video> videos) {
+        mMovieVideoAdapter.updateMovieVideos(videos);
     }
 
     @Override
@@ -159,10 +185,28 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
     public void hideRecyclersAndLabels() {
         reviewsLabelTextView.setVisibility(View.GONE);
         movieReviewsRecyclerView.setVisibility(View.GONE);
+        videoLabelTextView.setVisibility(View.GONE);
+        movieVideosRecyclerView.setVisibility(View.GONE);
     }
 
     public void showRecyclersAndLabels() {
         reviewsLabelTextView.setVisibility(View.VISIBLE);
         movieReviewsRecyclerView.setVisibility(View.VISIBLE);
+        videoLabelTextView.setVisibility(View.VISIBLE);
+        movieVideosRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof IMovieDetailContract) {
+            mIMovieDetailContract = (IMovieDetailContract) context;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mIMovieDetailContract = null;
     }
 }

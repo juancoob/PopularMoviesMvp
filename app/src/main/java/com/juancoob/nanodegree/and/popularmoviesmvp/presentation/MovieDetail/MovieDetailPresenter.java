@@ -2,9 +2,12 @@ package com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieDetail;
 
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.executor.impl.ThreadExecutor;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Review;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Video;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.threading.MainThread;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.FetchingMovieReviewsUseCase;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.FetchingMovieVideosUseCase;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.impl.FetchingMovieReviewsUseCaseImpl;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.impl.FetchingMovieVideosUseCaseImpl;
 import com.juancoob.nanodegree.and.popularmoviesmvp.presentation.presenters.AbstractPresenter;
 import com.juancoob.nanodegree.and.popularmoviesmvp.repository.MoviesRepository;
 
@@ -15,7 +18,7 @@ import java.util.ArrayList;
  */
 
 public class MovieDetailPresenter extends AbstractPresenter implements IMovieDetailContract.Presenter,
-        FetchingMovieReviewsUseCase.Callback {
+        FetchingMovieReviewsUseCase.Callback, FetchingMovieVideosUseCase.Callback {
 
     private MovieDetailFragment mMovieDetailFragment;
     private MoviesRepository mMoviesRepository;
@@ -34,16 +37,23 @@ public class MovieDetailPresenter extends AbstractPresenter implements IMovieDet
 
     @Override
     public void resume() {
-
-        FetchingMovieReviewsUseCase useCase = new FetchingMovieReviewsUseCaseImpl(
+        FetchingMovieReviewsUseCase reviewsUseCase = new FetchingMovieReviewsUseCaseImpl(
                 mExecutor,
                 mMainThread,
                 this,
                 mMoviesRepository,
                 mMovieId);
 
-        useCase.execute();
+        reviewsUseCase.execute();
 
+        FetchingMovieVideosUseCase videosUseCase = new FetchingMovieVideosUseCaseImpl(
+                mExecutor,
+                mMainThread,
+                this,
+                mMoviesRepository,
+                mMovieId);
+
+        videosUseCase.execute();
     }
 
     @Override
@@ -69,6 +79,11 @@ public class MovieDetailPresenter extends AbstractPresenter implements IMovieDet
     @Override
     public void onReviewsRetrieved(ArrayList<Review> movieReviewList) {
         mMovieDetailFragment.showMovieReviews(movieReviewList);
+    }
+
+    @Override
+    public void onVideosRetrieved(ArrayList<Video> videoList) {
+        mMovieDetailFragment.showMovieVideos(videoList);
     }
 
     @Override

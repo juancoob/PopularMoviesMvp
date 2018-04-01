@@ -5,7 +5,9 @@ import android.support.annotation.NonNull;
 import com.juancoob.nanodegree.and.popularmoviesmvp.BuildConfig;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.MovieResponse;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.ReviewResponse;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.VideoResponse;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.impl.FetchingMovieReviewsUseCaseImpl;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.impl.FetchingMovieVideosUseCaseImpl;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.impl.FetchingMoviesUseCaseImpl;
 import com.juancoob.nanodegree.and.popularmoviesmvp.repository.REST.IMovieAPIService;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.Constants;
@@ -28,7 +30,7 @@ public class MoviesRepository implements Repository {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-         return retrofit.create(IMovieAPIService.class);
+        return retrofit.create(IMovieAPIService.class);
     }
 
     @Override
@@ -47,11 +49,11 @@ public class MoviesRepository implements Repository {
                 break;
         }
 
-        if(responseCall != null) {
+        if (responseCall != null) {
             responseCall.enqueue(new Callback<MovieResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<MovieResponse> call, @NonNull Response<MovieResponse> response) {
-                    if(response.body() != null) {
+                    if (response.isSuccessful()) {
                         fetchingMoviesUseCaseImpl.showMovies(response.body().getMovieList());
                     } else {
                         fetchingMoviesUseCaseImpl.noApiKey();
@@ -71,11 +73,11 @@ public class MoviesRepository implements Repository {
     public void fetchMovieReviews(int movieId, final FetchingMovieReviewsUseCaseImpl fetchingMovieReviewsUseCaseImpl) {
         IMovieAPIService iMovieAPIService = retrofitRequest();
         Call<ReviewResponse> responseCall = iMovieAPIService.getReviewsByMovieId(movieId, BuildConfig.MOVIE_DB_API_KEY);
-        if(responseCall != null) {
+        if (responseCall != null) {
             responseCall.enqueue(new Callback<ReviewResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<ReviewResponse> call, @NonNull Response<ReviewResponse> response) {
-                    if(response.isSuccessful()) {
+                    if (response.isSuccessful()) {
                         fetchingMovieReviewsUseCaseImpl.showReviews(response.body().getReviewList());
                     }
                 }
@@ -90,8 +92,25 @@ public class MoviesRepository implements Repository {
     }
 
     @Override
-    public void fetchMovieVideos(int movieId) {
+    public void fetchMovieVideos(int movieId, final FetchingMovieVideosUseCaseImpl fetchingMovieVideosUseCaseImpl) {
+        IMovieAPIService iMovieAPIService = retrofitRequest();
+        Call<VideoResponse> responseCall = iMovieAPIService.getVideosByMovieId(movieId, BuildConfig.MOVIE_DB_API_KEY);
+        if (responseCall != null) {
+            responseCall.enqueue(new Callback<VideoResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<VideoResponse> call, @NonNull Response<VideoResponse> response) {
+                    if (response.isSuccessful()) {
+                        fetchingMovieVideosUseCaseImpl.showVideos(response.body().getVideoList());
+                    }
+                }
 
+                @Override
+                public void onFailure(@NonNull Call<VideoResponse> call, @NonNull Throwable t) {
+                    // no internet
+                    fetchingMovieVideosUseCaseImpl.noInternetConnection();
+                }
+            });
+        }
     }
 
 

@@ -1,7 +1,9 @@
 package com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieDetail;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import com.juancoob.nanodegree.and.popularmoviesmvp.R;
@@ -16,10 +18,9 @@ import com.juancoob.nanodegree.and.popularmoviesmvp.util.Constants;
  * Created by Juan Antonio Cobos Obrero on 07/03/2018.
  */
 
-public class MovieDetailActivity extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity implements IMovieDetailContract {
 
     private MovieDetailFragment mMovieDetailFragment;
-    private MovieDetailPresenter mMovieDetailPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +44,14 @@ public class MovieDetailActivity extends AppCompatActivity {
             Movie movie = intent.getParcelableExtra(Constants.MOVIE_DETAIL);
             mMovieDetailFragment.setMovie(movie);
 
-            mMovieDetailPresenter = new MovieDetailPresenter(
+            MovieDetailPresenter movieDetailPresenter = new MovieDetailPresenter(
                     mMovieDetailFragment,
                     ThreadExecutor.getInstance(),
                     MainThreadImpl.getInstane(),
                     new MoviesRepository(),
                     movie.getMovieId());
 
-            mMovieDetailFragment.setPresenter(mMovieDetailPresenter);
+            mMovieDetailFragment.setPresenter(movieDetailPresenter);
         }
 
         if (savedInstanceState != null) {
@@ -62,6 +63,25 @@ public class MovieDetailActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(Constants.MOVIE, mMovieDetailFragment.getMovie());
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onClickVideoListener(Uri videoUri) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(videoUri)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onLongClickVideoListener(Uri videoUri) {
+        String videoMessage = getString(R.string.video_message) + " " + videoUri;
+        ShareCompat.IntentBuilder
+                .from(this)
+                .setChooserTitle(R.string.share_video)
+                .setType("text/plain")
+                .setText(videoMessage)
+                .startChooser();
     }
 }
 
