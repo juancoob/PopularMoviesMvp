@@ -23,4 +23,11 @@
     <string name="video_label">Videos</string>
     <string name="share_video">Share this video</string>
     <string name="video_message">Hey! check out this video!</string>
+    <string name="favorite_image_description">favorite image button</string>
+    <string name="no_favorite_movie">You dislike this movie</string>
+    <string name="favorite_movie">You like this movie</string>
+    <string name="favorite_movies">Favorite movies</string>
+    <string name="favorite_movies_empty">You don\'t have any favorite movie</string>
+    <string name="not_added_favorite_movies_error">That movie has not been added as favorite. Please, try again</string>
+    <string name="not_removed_favorite_movies_error">That movie has not been removed from favorite list. Please, try again</string>
 </resources>
