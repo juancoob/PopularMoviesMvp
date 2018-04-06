@@ -87,6 +87,12 @@ public class MovieListPresenter extends AbstractPresenter implements IMovieListC
         mMovieListFragment.showApiKeyError();
     }
 
+    @Override
+    public void noFavoriteMovies() {
+        mMovieListFragment.hideProgress();
+        mMovieListFragment.showNoFavoriteMovies();
+    }
+
     public String getChosenOption() {
         return mChosenOption;
     }

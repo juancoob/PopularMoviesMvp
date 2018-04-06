@@ -13,11 +13,14 @@ import java.util.ArrayList;
 public interface IMovieListContract {
 
     void onClickListener(Movie movie);
+    void showNoFavoriteMovies();
+    String getChosenOption();
 
     interface View extends BaseView {
         void showMovieList(ArrayList<Movie> mMovieList);
         void showApiKeyError();
         void hideErrorTextAndButton();
+        void showNoFavoriteMovies();
     }
 
     interface Presenter extends BasePresenter {

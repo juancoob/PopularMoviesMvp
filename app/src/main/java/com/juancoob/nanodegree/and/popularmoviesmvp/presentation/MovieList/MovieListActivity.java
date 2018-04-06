@@ -66,6 +66,17 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
         startActivity(intent);
     }
 
+    // It is going to update the empty list when it's called from favorite movies
+    @Override
+    public void showNoFavoriteMovies() {
+        mMovieListFragment.showNoFavoriteMovies();
+    }
+
+    @Override
+    public String getChosenOption() {
+        return mMovieListPresenter.getChosenOption();
+    }
+
 
     //TODO CHANGE TO VIEWPAGER
 
@@ -99,6 +110,13 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
                 mMovieListPresenter.resume();
                 showOption(Constants.TOP);
                 break;
+            case R.id.favorites:
+                mMovieListPresenter.setChosenOption(Constants.FAVORITES);
+                mMovieListFragment.hideErrorTextAndButton();
+                mMovieListFragment.showProgress();
+                mMovieListPresenter.resume();
+                showOption(Constants.FAVORITES);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -107,8 +125,14 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
         if(Constants.POPULAR.equals(option)) {
             mMenu.findItem(R.id.popular_movies_label).setVisible(true);
             mMenu.findItem(R.id.top_rated_label).setVisible(false);
+            mMenu.findItem(R.id.favorite_label).setVisible(false);
         } else if(Constants.TOP.equals(option)) {
             mMenu.findItem(R.id.top_rated_label).setVisible(true);
+            mMenu.findItem(R.id.popular_movies_label).setVisible(false);
+            mMenu.findItem(R.id.favorite_label).setVisible(false);
+        } else if(Constants.FAVORITES.equals(option)) {
+            mMenu.findItem(R.id.favorite_label).setVisible(true);
+            mMenu.findItem(R.id.top_rated_label).setVisible(false);
             mMenu.findItem(R.id.popular_movies_label).setVisible(false);
         }
     }

@@ -20,6 +20,7 @@ import com.juancoob.nanodegree.and.popularmoviesmvp.R;
 import com.juancoob.nanodegree.and.popularmoviesmvp.adapter.IMovieListAdapterContract;
 import com.juancoob.nanodegree.and.popularmoviesmvp.adapter.impl.MovieListAdapter;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
+import com.juancoob.nanodegree.and.popularmoviesmvp.repository.database.impl.MovieDb;
 
 import java.util.ArrayList;
 
@@ -39,8 +40,8 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
     @BindView(R.id.pb_movie)
     public ProgressBar movieProgressBar;
 
-    @BindView(R.id.tv_no_internet_nor_api_key)
-    public TextView noInternetNorApiKeyTextView;
+    @BindView(R.id.tv_warning)
+    public TextView warningTextView;
 
     @BindView(R.id.btn_retry)
     public Button retryButton;
@@ -85,6 +86,7 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
     }
 
     private void initRecyclerView() {
+        MovieDb.getInstance().init(getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), getNumberOfColumns());
         movieListRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new MovieListAdapter(getContext(), mIMovieListContract);
@@ -135,8 +137,8 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
     public void noInternetConnection() {
         // Empty the list and show the message
         mAdapter.updateMovieList(new ArrayList<Movie>());
-        noInternetNorApiKeyTextView.setVisibility(View.VISIBLE);
-        noInternetNorApiKeyTextView.setText(getString(R.string.no_internet));
+        warningTextView.setVisibility(View.VISIBLE);
+        warningTextView.setText(getString(R.string.no_internet));
         retryButton.setVisibility(View.VISIBLE);
     }
 
@@ -148,14 +150,21 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
 
     @Override
     public void showApiKeyError() {
-        noInternetNorApiKeyTextView.setVisibility(View.VISIBLE);
-        noInternetNorApiKeyTextView.setText(getString(R.string.no_api_key));
+        warningTextView.setVisibility(View.VISIBLE);
+        warningTextView.setText(getString(R.string.no_api_key));
     }
 
     @Override
     public void hideErrorTextAndButton() {
-        noInternetNorApiKeyTextView.setVisibility(View.GONE);
+        warningTextView.setVisibility(View.GONE);
         retryButton.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showNoFavoriteMovies() {
+        mAdapter.updateMovieList(new ArrayList<Movie>());
+        warningTextView.setVisibility(View.VISIBLE);
+        warningTextView.setText(getString(R.string.favorite_movies_empty));
     }
 
 }
