@@ -22,6 +22,7 @@ public class Constants {
     public static final String YOUTUBE = "YouTube";
     public static final String POPULAR = "popular";
     public static final String TOP = "top";
+    public static final String FAVORITES = "favorites";
     public static final int CORE_POOL_SIZE = 3;
     public static final int MAXIMUN_POOL_SIZE = 5;
     public static final long KEEP_ALIVE_TIME = 120L;
