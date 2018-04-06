@@ -15,6 +15,7 @@ public interface FetchingMoviesUseCase extends UseCase {
         void onMoviesRetrieved(ArrayList<Movie> movieList);
         void noInternetConnection();
         void noApiKey();
+        void noFavoriteMovies();
     }
 
 }

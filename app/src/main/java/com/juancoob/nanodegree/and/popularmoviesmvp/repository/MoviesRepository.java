@@ -1,8 +1,10 @@
 package com.juancoob.nanodegree.and.popularmoviesmvp.repository;
 
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.juancoob.nanodegree.and.popularmoviesmvp.BuildConfig;
+import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.MovieResponse;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.ReviewResponse;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.VideoResponse;
@@ -10,7 +12,11 @@ import com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.impl.Fetching
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.impl.FetchingMovieVideosUseCaseImpl;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.impl.FetchingMoviesUseCaseImpl;
 import com.juancoob.nanodegree.and.popularmoviesmvp.repository.REST.IMovieAPIService;
+import com.juancoob.nanodegree.and.popularmoviesmvp.repository.database.MovieContract;
+import com.juancoob.nanodegree.and.popularmoviesmvp.repository.database.impl.MovieDb;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.Constants;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,6 +53,11 @@ public class MoviesRepository implements Repository {
             case Constants.TOP:
                 responseCall = iMovieAPIService.getTopRatedMovies(BuildConfig.MOVIE_DB_API_KEY);
                 break;
+            case Constants.FAVORITES:
+                Cursor cursor = MovieDb.getInstance().getFavoriteMovies();
+                fetchingMoviesUseCaseImpl.showMovies(parseCursorToMovies(cursor));
+                cursor.close();
+                return;
         }
 
         if (responseCall != null) {
@@ -113,5 +124,28 @@ public class MoviesRepository implements Repository {
         }
     }
 
+    private ArrayList<Movie> parseCursorToMovies(Cursor cursor) {
+        Movie movie;
+        ArrayList<Movie> movieList = new ArrayList<>();
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            movie = new Movie();
+            movie.setMovieId(cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID)));
+            movie.setTitle(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE)));
+            movie.setImagePath(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH)));
+            movie.setOverview(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW)));
+            movie.setVoteAverage(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_VOTE_AVERAGE)));
+            movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE)));
+            movie.setVoteCount(cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_VOTE_COUNT)));
+            movie.setVideo(cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_VIDEO)) != 0);
+            movie.setPopularity(cursor.getFloat(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_POPULARITY)));
+            movie.setOriginalLanguage(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ORIGINAL_LANGUAGE)));
+            movie.setOriginalTitle(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ORIGINAL_TITLE)));
+            movie.setBackdropPath(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_BACKDROP_PATH)));
+            movie.setIsAdult(cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ADULT)) != 0);
+            movie.setFavorite(cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_FAVORITE)) != 0);
+            movieList.add(movie);
+        }
+        return movieList;
+    }
 
 }

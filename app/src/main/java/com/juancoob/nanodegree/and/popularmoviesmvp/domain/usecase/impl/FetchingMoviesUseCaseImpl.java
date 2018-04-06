@@ -8,6 +8,7 @@ import com.juancoob.nanodegree.and.popularmoviesmvp.domain.threading.MainThread;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.FetchingMoviesUseCase;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.base.AbstractUseCase;
 import com.juancoob.nanodegree.and.popularmoviesmvp.repository.MoviesRepository;
+import com.juancoob.nanodegree.and.popularmoviesmvp.util.Constants;
 
 import java.util.ArrayList;
 
@@ -50,7 +51,11 @@ public class FetchingMoviesUseCaseImpl extends AbstractUseCase implements Fetchi
     public void showMovies(@Nullable final ArrayList<Movie> movieList) {
 
         if (movieList == null || movieList.size() == 0) {
-            noInternetConnection();
+            if(Constants.FAVORITES.equals(mChosenOption)) {
+                noFavoriteMovies();
+            } else {
+                noInternetConnection();
+            }
             return;
         }
 
@@ -67,6 +72,15 @@ public class FetchingMoviesUseCaseImpl extends AbstractUseCase implements Fetchi
             @Override
             public void run() {
                 mCallback.noInternetConnection();
+            }
+        });
+    }
+
+    private void noFavoriteMovies() {
+        mMainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                mCallback.noFavoriteMovies();
             }
         });
     }
