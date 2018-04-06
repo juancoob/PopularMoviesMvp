@@ -21,6 +21,7 @@
         tools:src="@drawable/ic_launcher_background" />
 
     <ImageView
+        android:id="@+id/iv_data_background"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/black_gradient"
@@ -39,9 +40,6 @@
         android:layout_marginLeft="@dimen/default_margin"
         android:layout_marginStart="@dimen/default_margin"
         android:shadowColor="@color/colorPrimary"
-        android:shadowDx="0"
-        android:shadowDy="0"
-        android:shadowRadius="10"
         android:textColor="@color/white"
         android:textSize="@dimen/small_info_size"
         android:textStyle="bold"
@@ -56,14 +54,25 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/default_margin"
         android:shadowColor="@color/colorPrimary"
-        android:shadowDx="0"
-        android:shadowDy="0"
-        android:shadowRadius="10"
         android:textColor="@color/white"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/iv_movie_poster"
         app:layout_constraintLeft_toLeftOf="@+id/tv_movie_title"
         app:layout_constraintStart_toStartOf="@+id/tv_movie_title"
         tools:text="@string/dummy_date" />
+
+    <ImageView
+        android:id="@+id/iv_favorite_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        android:clickable="true"
+        android:contentDescription="@string/favorite_image_description"
+        android:focusable="true"
+        android:src="@drawable/ic_no_favorite"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_data_background"
+        app:layout_constraintEnd_toEndOf="@+id/iv_data_background"
+        app:layout_constraintRight_toRightOf="@+id/iv_data_background"
+        app:layout_constraintTop_toTopOf="@+id/iv_data_background" />
 
 </android.support.constraint.ConstraintLayout>

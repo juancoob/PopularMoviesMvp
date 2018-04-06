@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_no_internet_nor_api_key"
+        android:id="@+id/tv_warning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/info_size"
@@ -40,7 +40,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_no_internet_nor_api_key" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_warning" />
 
     <ProgressBar
         android:id="@+id/pb_movie"
