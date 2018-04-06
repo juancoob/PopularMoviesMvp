@@ -25,9 +25,8 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
-
     @SerializedName("id")
-    private int mMovieId;
+    private Integer mMovieId;
 
     @SerializedName("title")
     private String mTitle;
@@ -68,23 +67,33 @@ public class Movie implements Parcelable {
     @SerializedName("adult")
     private boolean mIsAdult;
 
+    private boolean mFavorite;
+
     public Movie() {
     }
 
-    private Movie(Parcel in) {
+    protected Movie(Parcel in) {
         mMovieId = in.readInt();
         mTitle = in.readString();
         mImagePath = in.readString();
         mOverview = in.readString();
         mVoteAverage = in.readString();
         mReleaseDate = in.readString();
+        mVoteCount = in.readInt();
+        mVideo = in.readByte() != 0;
+        mPopularity = in.readFloat();
+        mOriginalLanguage = in.readString();
+        mOriginalTitle = in.readString();
+        mBackdropPath = in.readString();
+        mIsAdult = in.readByte() != 0;
+        mFavorite = in.readByte() != 0;
     }
 
-    public int getMovieId() {
+    public Integer getMovieId() {
         return mMovieId;
     }
 
-    public void setMovieId(int movieId) {
+    public void setMovieId(Integer movieId) {
         mMovieId = movieId;
     }
 
@@ -184,12 +193,20 @@ public class Movie implements Parcelable {
         mBackdropPath = backdropPath;
     }
 
-    public boolean isIsAdult() {
+    public boolean isAdult() {
         return mIsAdult;
     }
 
     public void setIsAdult(boolean isAdult) {
         mIsAdult = isAdult;
+    }
+
+    public boolean isFavorite() {
+        return mFavorite;
+    }
+
+    public void setFavorite(boolean mFavorite) {
+        this.mFavorite = mFavorite;
     }
 
     @Override
@@ -212,5 +229,6 @@ public class Movie implements Parcelable {
         parcel.writeString(mOriginalTitle);
         parcel.writeString(mBackdropPath);
         parcel.writeByte((byte) (mIsAdult ? 1 : 0));
+        parcel.writeByte((byte) (mFavorite ? 1 : 0));
     }
 }
