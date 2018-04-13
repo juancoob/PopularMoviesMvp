@@ -1,5 +1,6 @@
 package com.juancoob.nanodegree.and.popularmoviesmvp.repository.database;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
@@ -7,7 +8,18 @@ import android.provider.BaseColumns;
  */
 public class MovieContract {
 
+    public static final String AUTHORITY = "com.juancoob.nanodegree.and.popularmoviesmvp";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+    public static final String PATH_FAVORITE_MOVIES = "favoriteMovies";
+
     public static final class MovieEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVORITE_MOVIES).build();
+
+        public static Uri buildNewUriWithId(String id) {
+            return CONTENT_URI.buildUpon().appendPath(id).build();
+        }
+
         public static final String TABLE_NAME = "favoriteMovies";
         public static final String COLUMN_MOVIE_ID = "movieId";
         public static final String COLUMN_MOVIE_TITLE = "movieTitle";
