@@ -11,7 +11,6 @@
     <string name="dummy_date">2018</string>
     <string name="dummy_average">3.4</string>
     <string name="dummy_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean posuere, velit sed dapibus blandit, est augue tincidunt erat, vel faucibus massa velit sed mi. Aenean a ex orci. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Morbi egestas turpis et turpis egestas iaculis. Morbi pulvinar elit ac ipsum accumsan auctor. Donec auctor augue nec arcu tincidunt, sed dignissim ex sagittis. Curabitur libero dui, aliquam eget dictum scelerisque, vehicula et orci. Vestibulum non enim vitae felis semper commodo. </string>
-    <string name="call_error">Sorry, we had an error fetching movies!</string>
     <string name="calendar_icon">calendar icon</string>
     <string name="no_api_key">Did you added your API KEY correctly?</string>
     <string name="no_internet">No internet connection</string>
@@ -27,7 +26,11 @@
     <string name="no_favorite_movie">You dislike this movie</string>
     <string name="favorite_movie">You like this movie</string>
     <string name="favorite_movies">Favorite movies</string>
+    <string name="sort_favorite_movies">Sort by favorite movies</string>
     <string name="favorite_movies_empty">You don\'t have any favorite movie</string>
     <string name="not_added_favorite_movies_error">That movie has not been added as favorite. Please, try again</string>
     <string name="not_removed_favorite_movies_error">That movie has not been removed from favorite list. Please, try again</string>
+    <string name="failed_insert_row">Failed to insert row into %1$s</string>
+    <string name="unknown_uri">Unknown uri: %1$s</string>
+    <string name="no_implemented">Not yet implemented</string>
 </resources>
