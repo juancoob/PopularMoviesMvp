@@ -48,7 +48,8 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
                 ThreadExecutor.getInstance(),
                 MainThreadImpl.getInstane(),
                 new MoviesRepository(),
-                mChosenOption);
+                mChosenOption,
+                getContentResolver());
 
         mMovieListFragment.setPresenter(mMovieListPresenter);
     }
@@ -122,18 +123,22 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
     }
 
     private void showOption(String option) {
-        if(Constants.POPULAR.equals(option)) {
-            mMenu.findItem(R.id.popular_movies_label).setVisible(true);
-            mMenu.findItem(R.id.top_rated_label).setVisible(false);
-            mMenu.findItem(R.id.favorite_label).setVisible(false);
-        } else if(Constants.TOP.equals(option)) {
-            mMenu.findItem(R.id.top_rated_label).setVisible(true);
-            mMenu.findItem(R.id.popular_movies_label).setVisible(false);
-            mMenu.findItem(R.id.favorite_label).setVisible(false);
-        } else if(Constants.FAVORITES.equals(option)) {
-            mMenu.findItem(R.id.favorite_label).setVisible(true);
-            mMenu.findItem(R.id.top_rated_label).setVisible(false);
-            mMenu.findItem(R.id.popular_movies_label).setVisible(false);
+        switch (option) {
+            case Constants.POPULAR:
+                mMenu.findItem(R.id.popular_movies_label).setVisible(true);
+                mMenu.findItem(R.id.top_rated_label).setVisible(false);
+                mMenu.findItem(R.id.favorite_label).setVisible(false);
+                break;
+            case Constants.TOP:
+                mMenu.findItem(R.id.top_rated_label).setVisible(true);
+                mMenu.findItem(R.id.popular_movies_label).setVisible(false);
+                mMenu.findItem(R.id.favorite_label).setVisible(false);
+                break;
+            case Constants.FAVORITES:
+                mMenu.findItem(R.id.favorite_label).setVisible(true);
+                mMenu.findItem(R.id.top_rated_label).setVisible(false);
+                mMenu.findItem(R.id.popular_movies_label).setVisible(false);
+                break;
         }
     }
 }

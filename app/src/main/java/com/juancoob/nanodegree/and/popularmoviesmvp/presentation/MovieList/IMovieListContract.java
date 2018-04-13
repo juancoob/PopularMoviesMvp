@@ -21,6 +21,7 @@ public interface IMovieListContract {
         void showApiKeyError();
         void hideErrorTextAndButton();
         void showNoFavoriteMovies();
+        void getFavoriteMovieIds(ArrayList<Integer> favoriteMovieIdsList);
     }
 
     interface Presenter extends BasePresenter {

@@ -10,4 +10,5 @@ import java.util.ArrayList;
 
 public interface IMovieListAdapterContract {
     void updateMovieList(ArrayList<Movie> movieList);
+    void getFavoriteMovieIdList(ArrayList<Integer> favoriteMovieIdList);
 }

@@ -1,6 +1,8 @@
 package com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieList;
 
 
+import android.content.ContentResolver;
+
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.threading.MainThread;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.executor.impl.ThreadExecutor;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.FetchingMoviesUseCase;
@@ -19,18 +21,21 @@ public class MovieListPresenter extends AbstractPresenter implements IMovieListC
         FetchingMoviesUseCase.Callback {
 
     private final IMovieListContract.View mMovieListFragment;
-    private MoviesRepository mMoviesRepository;
+    private final MoviesRepository mMoviesRepository;
     private String mChosenOption;
+    private final ContentResolver mContentResolver;
 
     public MovieListPresenter(IMovieListContract.View movieListFragment,
                               ThreadExecutor executor,
                               MainThread mainThread,
                               MoviesRepository moviesRepository,
-                              String chosenOption) {
+                              String chosenOption,
+                              ContentResolver contentResolver) {
         super(executor, mainThread);
         mMovieListFragment = movieListFragment;
         mMoviesRepository = moviesRepository;
         mChosenOption = chosenOption;
+        mContentResolver = contentResolver;
     }
 
     @Override
@@ -43,7 +48,8 @@ public class MovieListPresenter extends AbstractPresenter implements IMovieListC
                 mMainThread,
                 this,
                 mMoviesRepository,
-                mChosenOption);
+                mChosenOption,
+                mContentResolver);
 
         // Run the use case
         useCase.execute();
@@ -73,6 +79,11 @@ public class MovieListPresenter extends AbstractPresenter implements IMovieListC
     public void onMoviesRetrieved(ArrayList<Movie> movieList) {
         mMovieListFragment.hideProgress();
         mMovieListFragment.showMovieList(movieList);
+    }
+
+    @Override
+    public void onFavoriteMovieIdsRetrieved(ArrayList<Integer> favoriteMovieIdsList) {
+        mMovieListFragment.getFavoriteMovieIds(favoriteMovieIdsList);
     }
 
     @Override

@@ -13,6 +13,7 @@ public interface FetchingMoviesUseCase extends UseCase {
 
     interface Callback {
         void onMoviesRetrieved(ArrayList<Movie> movieList);
+        void onFavoriteMovieIdsRetrieved(ArrayList<Integer> favoriteMovieIdsList);
         void noInternetConnection();
         void noApiKey();
         void noFavoriteMovies();

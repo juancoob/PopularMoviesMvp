@@ -37,6 +37,6 @@
 
     <item
         android:id="@+id/favorites"
-        android:title="@string/favorite_movies"
+        android:title="@string/sort_favorite_movies"
         app:showAsAction="never" />
 </menu>

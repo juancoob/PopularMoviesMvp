@@ -20,7 +20,6 @@ import com.juancoob.nanodegree.and.popularmoviesmvp.R;
 import com.juancoob.nanodegree.and.popularmoviesmvp.adapter.IMovieListAdapterContract;
 import com.juancoob.nanodegree.and.popularmoviesmvp.adapter.impl.MovieListAdapter;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
-import com.juancoob.nanodegree.and.popularmoviesmvp.repository.database.impl.MovieDb;
 
 import java.util.ArrayList;
 
@@ -86,7 +85,6 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
     }
 
     private void initRecyclerView() {
-        MovieDb.getInstance().init(getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), getNumberOfColumns());
         movieListRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new MovieListAdapter(getContext(), mIMovieListContract);
@@ -165,6 +163,11 @@ public class MovieListFragment extends Fragment implements IMovieListContract.Vi
         mAdapter.updateMovieList(new ArrayList<Movie>());
         warningTextView.setVisibility(View.VISIBLE);
         warningTextView.setText(getString(R.string.favorite_movies_empty));
+    }
+
+    @Override
+    public void getFavoriteMovieIds(ArrayList<Integer> favoriteMovieIdsList) {
+        mAdapter.getFavoriteMovieIdList(favoriteMovieIdsList);
     }
 
 }

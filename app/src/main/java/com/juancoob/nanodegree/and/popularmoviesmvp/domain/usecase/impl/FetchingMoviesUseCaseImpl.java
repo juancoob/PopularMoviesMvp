@@ -1,5 +1,6 @@
 package com.juancoob.nanodegree.and.popularmoviesmvp.domain.usecase.impl;
 
+import android.content.ContentResolver;
 import android.support.annotation.Nullable;
 
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.executor.Executor;
@@ -18,25 +19,32 @@ import java.util.ArrayList;
 
 public class FetchingMoviesUseCaseImpl extends AbstractUseCase implements FetchingMoviesUseCase {
 
-    private FetchingMoviesUseCase.Callback mCallback;
-    private MoviesRepository mMoviesRepository;
-    private String mChosenOption;
+    private final FetchingMoviesUseCase.Callback mCallback;
+    private final MoviesRepository mMoviesRepository;
+    private final String mChosenOption;
+    private final ContentResolver mContentResolver;
 
     public FetchingMoviesUseCaseImpl(Executor executor,
                                      MainThread mainThread,
                                      Callback callback,
                                      MoviesRepository moviesRepository,
-                                     String chosenOption) {
+                                     String chosenOption,
+                                     ContentResolver contentResolver) {
         super(executor, mainThread);
         mCallback = callback;
         mMoviesRepository = moviesRepository;
         mChosenOption = chosenOption;
+        mContentResolver = contentResolver;
     }
 
     @Override
     public void run() {
         // Fetch movies
         mMoviesRepository.fetchMovies(mChosenOption, this);
+    }
+
+    public ContentResolver getContentResolver() {
+        return mContentResolver;
     }
 
     public void noApiKey() {
@@ -63,6 +71,15 @@ public class FetchingMoviesUseCaseImpl extends AbstractUseCase implements Fetchi
             @Override
             public void run() {
                 mCallback.onMoviesRetrieved(movieList);
+            }
+        });
+    }
+
+    public void getFavoriteMovieIds(@Nullable final ArrayList<Integer> favoriteMovieIdList) {
+        mMainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                mCallback.onFavoriteMovieIdsRetrieved(favoriteMovieIdList);
             }
         });
     }
