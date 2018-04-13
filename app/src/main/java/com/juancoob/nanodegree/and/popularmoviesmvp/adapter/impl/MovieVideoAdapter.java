@@ -28,9 +28,9 @@ import butterknife.ButterKnife;
 public class MovieVideoAdapter extends RecyclerView.Adapter<MovieVideoAdapter.MovieVideoViewHolder>
         implements IMovieVideoAdapterContract {
 
-    private Context mCtx;
-    private ArrayList<Video> mVideoList = new ArrayList<>();
-    private IMovieDetailContract mIMovieDetailContract;
+    private final Context mCtx;
+    private final ArrayList<Video> mVideoList = new ArrayList<>();
+    private final IMovieDetailContract mIMovieDetailContract;
 
     public MovieVideoAdapter(Context context, IMovieDetailContract iMovieDetailContract) {
         mCtx = context;

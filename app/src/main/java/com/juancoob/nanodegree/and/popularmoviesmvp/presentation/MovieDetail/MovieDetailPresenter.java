@@ -20,9 +20,9 @@ import java.util.ArrayList;
 public class MovieDetailPresenter extends AbstractPresenter implements IMovieDetailContract.Presenter,
         FetchingMovieReviewsUseCase.Callback, FetchingMovieVideosUseCase.Callback {
 
-    private MovieDetailFragment mMovieDetailFragment;
-    private MoviesRepository mMoviesRepository;
-    private int mMovieId;
+    private final MovieDetailFragment mMovieDetailFragment;
+    private final MoviesRepository mMoviesRepository;
+    private final int mMovieId;
 
     public MovieDetailPresenter(MovieDetailFragment movieDetailFragment,
                                 ThreadExecutor executor,

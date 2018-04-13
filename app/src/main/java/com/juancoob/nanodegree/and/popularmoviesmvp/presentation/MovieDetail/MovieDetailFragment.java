@@ -1,13 +1,19 @@
 package com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieDetail;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.juancoob.nanodegree.and.popularmoviesmvp.R;
 import com.juancoob.nanodegree.and.popularmoviesmvp.adapter.impl.MovieReviewAdapter;
@@ -76,6 +83,9 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
     @BindView(R.id.btn_retry)
     public Button retryButton;
 
+    @BindView(R.id.tb_details)
+    public Toolbar detailsToolbar;
+
     private Movie mMovie;
     private MovieDetailPresenter mMovieDetailPresenter;
     private MovieReviewAdapter mMovieReviewAdapter;
@@ -103,6 +113,7 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = getLayoutInflater().inflate(R.layout.fragment_movie_detail, container, false);
         ButterKnife.bind(this, view);
+        setHasOptionsMenu(true);
         return view;
     }
 
@@ -114,9 +125,13 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
     }
 
     private void populateUi() {
-        if (getActivity() != null) {
+
+        if(getActivity() != null) {
+            ((AppCompatActivity) getActivity()).setSupportActionBar(detailsToolbar);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getActivity().setTitle(mMovie.getTitle());
         }
+
         movieDateTextView.setText(mMovie.getReleaseDate());
         moviePlotTextView.setText(mMovie.getOverview());
         movieAverageTextView.setText(mMovie.getVoteAverage());
@@ -128,12 +143,12 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
     }
 
     private void initializeRecyclerViews() {
-        LinearLayoutManager reviewsManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager reviewsManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         movieReviewsRecyclerView.setLayoutManager(reviewsManager);
         mMovieReviewAdapter = new MovieReviewAdapter(getContext());
         movieReviewsRecyclerView.setAdapter(mMovieReviewAdapter);
 
-        LinearLayoutManager videoManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager videoManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         movieVideosRecyclerView.setLayoutManager(videoManager);
         mMovieVideoAdapter = new MovieVideoAdapter(getContext(), mIMovieDetailContract);
         movieVideosRecyclerView.setAdapter(mMovieVideoAdapter);
@@ -208,5 +223,54 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
     public void onDetach() {
         super.onDetach();
         mIMovieDetailContract = null;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.movie_details_menu, menu);
+        if(mMovie.isFavorite()) {
+            menu.getItem(0).setIcon(R.drawable.ic_favorite);
+            menu.getItem(0).setTitle(R.string.favorite_movie);
+        } else {
+            menu.getItem(0).setIcon(R.drawable.ic_no_favorite);
+            menu.getItem(0).setTitle(R.string.no_favorite_movie);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home) {
+            if(getActivity() != null) {
+                getActivity().onBackPressed();
+            }
+        } else if(item.getTitle().equals(getString(R.string.no_favorite_movie))) {
+            item.setIcon(R.drawable.ic_favorite);
+            item.setTitle(R.string.favorite_movie);
+
+            Uri uri = null;
+            if(getActivity() != null) {
+                uri = ActivityUtils.insertMovie(mMovie, getActivity().getContentResolver());
+            }
+
+            if(uri == null) {
+                Toast.makeText(getContext(), R.string.not_added_favorite_movies_error, Toast.LENGTH_SHORT).show();
+                item.setIcon(R.drawable.ic_no_favorite);
+            }
+        } else {
+            item.setIcon(R.drawable.ic_no_favorite);
+            item.setTitle(R.string.no_favorite_movie);
+
+            int rowsDeleted = 0;
+            if(getActivity() != null) {
+                rowsDeleted = ActivityUtils.deleteMovie(mMovie.getMovieId(), getActivity().getContentResolver());
+            }
+
+            if(rowsDeleted == 0) {
+                Toast.makeText(getContext(), R.string.not_removed_favorite_movies_error, Toast.LENGTH_SHORT).show();
+                item.setIcon(R.drawable.ic_favorite);
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

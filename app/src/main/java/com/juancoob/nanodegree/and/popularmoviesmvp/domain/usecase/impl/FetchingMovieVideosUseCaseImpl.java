@@ -14,9 +14,9 @@ import java.util.ArrayList;
  */
 public class FetchingMovieVideosUseCaseImpl extends AbstractUseCase implements FetchingMovieVideosUseCase {
 
-    private FetchingMovieVideosUseCase.Callback mCallback;
-    private MoviesRepository mMoviesRepository;
-    private int mMovieId;
+    private final FetchingMovieVideosUseCase.Callback mCallback;
+    private final MoviesRepository mMoviesRepository;
+    private final int mMovieId;
 
     public FetchingMovieVideosUseCaseImpl(Executor executor,
                                           MainThread mainThread,

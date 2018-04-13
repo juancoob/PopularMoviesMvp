@@ -5,16 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.juancoob.nanodegree.and.popularmoviesmvp.R;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.executor.impl.ThreadExecutor;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.threading.impl.MainThreadImpl;
 import com.juancoob.nanodegree.and.popularmoviesmvp.repository.MoviesRepository;
-import com.juancoob.nanodegree.and.popularmoviesmvp.repository.database.impl.MovieDb;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.ActivityUtils;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.Constants;
 
@@ -25,7 +21,6 @@ import com.juancoob.nanodegree.and.popularmoviesmvp.util.Constants;
 public class MovieDetailActivity extends AppCompatActivity implements IMovieDetailContract {
 
     private MovieDetailFragment mMovieDetailFragment;
-    private Movie mMovie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +41,7 @@ public class MovieDetailActivity extends AppCompatActivity implements IMovieDeta
         }
 
         if(intent.hasExtra(Constants.MOVIE_DETAIL)) {
-            mMovie = intent.getParcelableExtra(Constants.MOVIE_DETAIL);
+            Movie mMovie = intent.getParcelableExtra(Constants.MOVIE_DETAIL);
             mMovieDetailFragment.setMovie(mMovie);
 
             MovieDetailPresenter movieDetailPresenter = new MovieDetailPresenter(
@@ -89,40 +84,6 @@ public class MovieDetailActivity extends AppCompatActivity implements IMovieDeta
                 .startChooser();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.movie_details_menu, menu);
-        if(mMovie.isFavorite()) {
-            menu.getItem(0).setIcon(R.drawable.ic_favorite);
-            menu.getItem(0).setTitle(R.string.favorite_movie);
-        } else {
-            menu.getItem(0).setIcon(R.drawable.ic_no_favorite);
-            menu.getItem(0).setTitle(R.string.no_favorite_movie);
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Movie movie = mMovieDetailFragment.getMovie();
-        if(item.getItemId() == android.R.id.home) {
-            onBackPressed();
-        } else if(item.getTitle().equals(getString(R.string.no_favorite_movie))) {
-            item.setIcon(R.drawable.ic_favorite);
-            item.setTitle(R.string.favorite_movie);
-            if(MovieDb.getInstance().addFavoriteMovie(movie) == -1) {
-                Toast.makeText(this, R.string.not_added_favorite_movies_error, Toast.LENGTH_SHORT).show();
-                item.setIcon(R.drawable.ic_no_favorite);
-            }
-        } else {
-            item.setIcon(R.drawable.ic_no_favorite);
-            item.setTitle(R.string.no_favorite_movie);
-            if(MovieDb.getInstance().removeMovie(movie.getMovieId()) == 0) {
-                Toast.makeText(this, R.string.not_removed_favorite_movies_error, Toast.LENGTH_SHORT).show();
-                item.setIcon(R.drawable.ic_favorite);
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }
 
