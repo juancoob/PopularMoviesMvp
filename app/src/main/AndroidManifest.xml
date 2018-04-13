@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.juancoob.nanodegree.and.popularmoviesmvp">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -26,11 +25,17 @@
         <activity
             android:name=".presentation.MovieDetail.MovieDetailActivity"
             android:launchMode="singleTop"
+            android:theme="@style/noActionBar"
             android:parentActivityName=".presentation.MovieList.MovieListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".presentation.MovieList.MovieListActivity" />
         </activity>
+
+        <provider
+            android:name=".repository.database.impl.MovieContentProvider"
+            android:authorities="com.juancoob.nanodegree.and.popularmoviesmvp"
+            android:exported="false" />
     </application>
 
 </manifest>
