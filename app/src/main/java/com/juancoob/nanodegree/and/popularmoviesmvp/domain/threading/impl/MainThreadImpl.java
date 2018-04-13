@@ -14,9 +14,9 @@ import com.juancoob.nanodegree.and.popularmoviesmvp.domain.threading.MainThread;
 
 public class MainThreadImpl implements MainThread {
 
-    private static MainThread sMainThread = new MainThreadImpl();
+    private static final MainThread sMainThread = new MainThreadImpl();
 
-    private Handler mHandler;
+    private final Handler mHandler;
 
     private MainThreadImpl() {
         mHandler = new Handler(Looper.getMainLooper());

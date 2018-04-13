@@ -9,8 +9,8 @@ import com.juancoob.nanodegree.and.popularmoviesmvp.domain.threading.MainThread;
 
 public abstract class AbstractUseCase implements UseCase {
 
-    protected Executor mThreadExecutor;
-    protected MainThread mMainThread;
+    protected final Executor mThreadExecutor;
+    protected final MainThread mMainThread;
 
     /* These variables are volatiles because we are going to manage them on different threads */
     protected volatile boolean mIsCanceled;

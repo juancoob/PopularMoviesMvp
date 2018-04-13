@@ -14,8 +14,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class ThreadExecutor implements Executor {
 
-    private static volatile ThreadExecutor sThreadExecutor = new ThreadExecutor();
-    private ThreadPoolExecutor mThreadPoolExecutor;
+    private static final ThreadExecutor sThreadExecutor = new ThreadExecutor();
+    private final ThreadPoolExecutor mThreadPoolExecutor;
 
     public static ThreadExecutor getInstance() {
         return sThreadExecutor;
