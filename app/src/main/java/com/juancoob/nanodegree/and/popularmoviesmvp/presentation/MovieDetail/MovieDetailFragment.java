@@ -1,8 +1,11 @@
 package com.juancoob.nanodegree.and.popularmoviesmvp.presentation.MovieDetail;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,6 +33,7 @@ import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Movie;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Review;
 import com.juancoob.nanodegree.and.popularmoviesmvp.domain.model.Video;
 import com.juancoob.nanodegree.and.popularmoviesmvp.util.ActivityUtils;
+import com.juancoob.nanodegree.and.popularmoviesmvp.util.Constants;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -87,10 +91,17 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
     public Toolbar detailsToolbar;
 
     private Movie mMovie;
+    private ArrayList<Video> mMovieVideoList = new ArrayList<>();
+    private ArrayList<Review> mMovieReviewList = new ArrayList<>();
     private MovieDetailPresenter mMovieDetailPresenter;
     private MovieReviewAdapter mMovieReviewAdapter;
     private MovieVideoAdapter mMovieVideoAdapter;
     private IMovieDetailContract mIMovieDetailContract;
+    private LinearLayoutManager mReviewsManager;
+    private Parcelable mCurrentReviewRecyclerViewState;
+    private LinearLayoutManager mVideoManager;
+    private Parcelable mCurrentVideoRecyclerViewState;
+    private boolean mMovieHasChanged;
 
     public static MovieDetailFragment getInstance() {
         return new MovieDetailFragment();
@@ -98,10 +109,6 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
 
     protected void setPresenter(MovieDetailPresenter movieDetailPresenter) {
         mMovieDetailPresenter = movieDetailPresenter;
-    }
-
-    public Movie getMovie() {
-        return mMovie;
     }
 
     public void setMovie(Movie mMovie) {
@@ -115,6 +122,31 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
         ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(Constants.MOVIE, mMovie);
+        outState.putParcelableArrayList(Constants.MOVIE_VIDEO_LIST, mMovieVideoList);
+        outState.putParcelable(Constants.CURRENT_VIDEO_POSITION, mVideoManager.onSaveInstanceState());
+        outState.putParcelableArrayList(Constants.MOVIE_REVIEW_LIST, mMovieReviewList);
+        outState.putParcelable(Constants.CURRENT_REVIEW_POSITION, mReviewsManager.onSaveInstanceState());
+        outState.putBoolean(Constants.MOVIE_CHANGED, mMovieHasChanged);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if(savedInstanceState != null) {
+            mMovie = savedInstanceState.getParcelable(Constants.MOVIE);
+            mMovieVideoList = savedInstanceState.getParcelableArrayList(Constants.MOVIE_VIDEO_LIST);
+            mCurrentVideoRecyclerViewState = savedInstanceState.getParcelable(Constants.CURRENT_VIDEO_POSITION);
+            mMovieReviewList = savedInstanceState.getParcelableArrayList(Constants.MOVIE_REVIEW_LIST);
+            mCurrentReviewRecyclerViewState = savedInstanceState.getParcelable(Constants.CURRENT_REVIEW_POSITION);
+            mMovieHasChanged = savedInstanceState.getBoolean(Constants.MOVIE_CHANGED);
+            updateMovieList();
+        }
     }
 
     @Override
@@ -143,13 +175,13 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
     }
 
     private void initializeRecyclerViews() {
-        LinearLayoutManager reviewsManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        movieReviewsRecyclerView.setLayoutManager(reviewsManager);
+        mReviewsManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        movieReviewsRecyclerView.setLayoutManager(mReviewsManager);
         mMovieReviewAdapter = new MovieReviewAdapter(getContext());
         movieReviewsRecyclerView.setAdapter(mMovieReviewAdapter);
 
-        LinearLayoutManager videoManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        movieVideosRecyclerView.setLayoutManager(videoManager);
+        mVideoManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        movieVideosRecyclerView.setLayoutManager(mVideoManager);
         mMovieVideoAdapter = new MovieVideoAdapter(getContext(), mIMovieDetailContract);
         movieVideosRecyclerView.setAdapter(mMovieVideoAdapter);
     }
@@ -174,12 +206,30 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
 
     @Override
     public void showMovieReviews(ArrayList<Review> reviews) {
+        mMovieReviewList = reviews;
         mMovieReviewAdapter.updateMovieReviews(reviews);
+        if(mCurrentReviewRecyclerViewState != null) {
+            mReviewsManager.onRestoreInstanceState(mCurrentReviewRecyclerViewState);
+        }
     }
 
     @Override
     public void showMovieVideos(ArrayList<Video> videos) {
+        mMovieVideoList = videos;
         mMovieVideoAdapter.updateMovieVideos(videos);
+        if(mCurrentVideoRecyclerViewState != null) {
+            mVideoManager.onRestoreInstanceState(mCurrentVideoRecyclerViewState);
+        }
+    }
+
+    @Override
+    public ArrayList<Video> getMovieVideoList() {
+        return mMovieVideoList;
+    }
+
+    @Override
+    public ArrayList<Review> getMovieReviewList() {
+        return mMovieReviewList;
     }
 
     @Override
@@ -250,12 +300,17 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
 
             Uri uri = null;
             if(getActivity() != null) {
+                mMovie.setFavorite(true);
                 uri = ActivityUtils.insertMovie(mMovie, getActivity().getContentResolver());
             }
 
             if(uri == null) {
+                mMovie.setFavorite(false);
                 Toast.makeText(getContext(), R.string.not_added_favorite_movies_error, Toast.LENGTH_SHORT).show();
                 item.setIcon(R.drawable.ic_no_favorite);
+            } else {
+                mMovieHasChanged = true;
+                updateMovieList();
             }
         } else {
             item.setIcon(R.drawable.ic_no_favorite);
@@ -263,14 +318,29 @@ public class MovieDetailFragment extends Fragment implements IMovieDetailContrac
 
             int rowsDeleted = 0;
             if(getActivity() != null) {
+                mMovie.setFavorite(false);
                 rowsDeleted = ActivityUtils.deleteMovie(mMovie.getMovieId(), getActivity().getContentResolver());
             }
 
             if(rowsDeleted == 0) {
+                mMovie.setFavorite(true);
                 Toast.makeText(getContext(), R.string.not_removed_favorite_movies_error, Toast.LENGTH_SHORT).show();
                 item.setIcon(R.drawable.ic_favorite);
+            } else {
+                mMovieHasChanged = true;
+                updateMovieList();
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateMovieList() {
+        Intent returnIntent = new Intent();
+        if(getActivity() != null && mMovieHasChanged) {
+            returnIntent.putExtra(Constants.FAVORITE_MOVIE_ID, mMovie.getMovieId());
+            getActivity().setResult(Activity.RESULT_OK, returnIntent);
+        } else {
+            getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
+        }
     }
 }

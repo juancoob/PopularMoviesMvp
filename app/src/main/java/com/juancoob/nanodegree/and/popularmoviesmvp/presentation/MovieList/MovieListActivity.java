@@ -64,7 +64,7 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
     public void onClickListener(Movie movie) {
         Intent intent = new Intent(this, MovieDetailActivity.class);
         intent.putExtra(Constants.MOVIE_DETAIL, movie);
-        startActivity(intent);
+        startActivityForResult(intent, Constants.FAVORITE_REQUEST_CODE);
     }
 
     // It is going to update the empty list when it's called from favorite movies
@@ -101,21 +101,21 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
                 mMovieListPresenter.setChosenOption(Constants.POPULAR);
                 mMovieListFragment.hideErrorTextAndButton();
                 mMovieListFragment.showProgress();
-                mMovieListPresenter.resume();
+                mMovieListPresenter.fetchingMoviesUseCase();
                 showOption(Constants.POPULAR);
                 break;
             case R.id.top_rated:
                 mMovieListPresenter.setChosenOption(Constants.TOP);
                 mMovieListFragment.hideErrorTextAndButton();
                 mMovieListFragment.showProgress();
-                mMovieListPresenter.resume();
+                mMovieListPresenter.fetchingMoviesUseCase();
                 showOption(Constants.TOP);
                 break;
             case R.id.favorites:
                 mMovieListPresenter.setChosenOption(Constants.FAVORITES);
                 mMovieListFragment.hideErrorTextAndButton();
                 mMovieListFragment.showProgress();
-                mMovieListPresenter.resume();
+                mMovieListPresenter.fetchingMoviesUseCase();
                 showOption(Constants.FAVORITES);
                 break;
         }
@@ -139,6 +139,23 @@ public class MovieListActivity extends AppCompatActivity implements IMovieListCo
                 mMenu.findItem(R.id.top_rated_label).setVisible(false);
                 mMenu.findItem(R.id.popular_movies_label).setVisible(false);
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == Constants.FAVORITE_REQUEST_CODE && resultCode == RESULT_OK) {
+            updateMovieList(data.getIntExtra(Constants.FAVORITE_MOVIE_ID, 0));
+        }
+    }
+
+    private void updateMovieList(int updatedMovieId) {
+        // If the movie is not favorite any more, update the movieIdList
+        if(mMovieListFragment.getMovieIdList().contains(updatedMovieId)) {
+            mMovieListFragment.getMovieIdList().remove((Integer)updatedMovieId);
+        } else {
+            mMovieListFragment.getMovieIdList().add(updatedMovieId);
         }
     }
 }

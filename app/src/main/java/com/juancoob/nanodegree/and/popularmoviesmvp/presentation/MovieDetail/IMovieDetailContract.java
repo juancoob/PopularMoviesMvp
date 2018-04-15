@@ -21,6 +21,8 @@ public interface IMovieDetailContract {
     interface View extends BaseView {
         void showMovieReviews(ArrayList<Review> reviews);
         void showMovieVideos(ArrayList<Video> videos);
+        ArrayList<Video> getMovieVideoList();
+        ArrayList<Review> getMovieReviewList();
     }
 
     interface Presenter extends BasePresenter {

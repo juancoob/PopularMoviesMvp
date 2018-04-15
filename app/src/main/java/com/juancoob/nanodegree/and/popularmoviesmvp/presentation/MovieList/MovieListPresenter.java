@@ -42,6 +42,15 @@ public class MovieListPresenter extends AbstractPresenter implements IMovieListC
     public void resume() {
         mMovieListFragment.showProgress();
 
+        if(mMovieListFragment.getMovieList().size() == 0) {
+            fetchingMoviesUseCase();
+        } else {
+            onMoviesRetrieved(mMovieListFragment.getMovieList());
+            onFavoriteMovieIdsRetrieved(mMovieListFragment.getMovieIdList());
+        }
+    }
+
+    public void fetchingMoviesUseCase() {
         // Initialize the use case
         FetchingMoviesUseCase useCase = new FetchingMoviesUseCaseImpl(
                 mExecutor,
@@ -83,7 +92,7 @@ public class MovieListPresenter extends AbstractPresenter implements IMovieListC
 
     @Override
     public void onFavoriteMovieIdsRetrieved(ArrayList<Integer> favoriteMovieIdsList) {
-        mMovieListFragment.getFavoriteMovieIds(favoriteMovieIdsList);
+        mMovieListFragment.retrieveFavoriteMovieIds(favoriteMovieIdsList);
     }
 
     @Override

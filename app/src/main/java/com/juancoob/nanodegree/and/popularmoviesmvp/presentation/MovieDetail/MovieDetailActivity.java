@@ -53,16 +53,6 @@ public class MovieDetailActivity extends AppCompatActivity implements IMovieDeta
 
             mMovieDetailFragment.setPresenter(movieDetailPresenter);
         }
-
-        if (savedInstanceState != null) {
-            mMovieDetailFragment.setMovie((Movie) savedInstanceState.getParcelable(Constants.MOVIE));
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(Constants.MOVIE, mMovieDetailFragment.getMovie());
-        super.onSaveInstanceState(outState);
     }
 
     @Override

@@ -49,9 +49,14 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     }
 
     @Override
-    public void getFavoriteMovieIdList(ArrayList<Integer> favoriteMovieIdList) {
+    public void retrieveFavoriteMovieIdList(ArrayList<Integer> favoriteMovieIdList) {
         mMovieFavoriteIdList.clear();
         mMovieFavoriteIdList.addAll(favoriteMovieIdList);
+    }
+
+    @Override
+    public ArrayList<Integer> getMovieIdList() {
+        return mMovieFavoriteIdList;
     }
 
     @NonNull
@@ -72,13 +77,14 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
                 .placeholder(R.drawable.ic_tmdb_logo)
                 .into(holder.moviePosterImageView);
         // Read from the local data if the user select sort by favorites, otherwise from the favorite list
-        if (Constants.FAVORITES.equals(mIMovieListContract.getChosenOption()) ?
-                movie.isFavorite() : mMovieFavoriteIdList.contains(movie.getMovieId())) {
+        if (mMovieFavoriteIdList.contains(movie.getMovieId())) {
             mMovieList.get(position).setFavorite(true);
             holder.favoriteButtonImageView.setImageDrawable(VectorDrawableCompat.create(mCtx.getResources(), R.drawable.ic_favorite, null));
         } else {
             holder.favoriteButtonImageView.setImageDrawable(VectorDrawableCompat.create(mCtx.getResources(), R.drawable.ic_no_favorite, null));
         }
+
+
     }
 
     @Override

@@ -10,6 +10,10 @@ import java.util.concurrent.TimeUnit;
 
 public class Constants {
     public static final String MOVIE = "movie";
+    public static final String MOVIE_LIST = "movieList";
+    public static final String MOVIE_ID_LIST = "movieIdList";
+    public static final String MOVIE_VIDEO_LIST = "movieVideoList";
+    public static final String MOVIE_REVIEW_LIST = "movieReviewList";
     public static final String MOVIE_OPTION = "movieOption";
     public static final String MOVIE_DETAIL = "movieDetail";
     public static final String MOVIE_BD_URL = "https://api.themoviedb.org/3/";
@@ -28,5 +32,10 @@ public class Constants {
     public static final long KEEP_ALIVE_TIME = 120L;
     public static final TimeUnit TIME_UNIT = TimeUnit.SECONDS;
     public static final BlockingQueue<Runnable> WORK_QUEUE = new LinkedBlockingDeque<>();
-
+    public static final String CURRENT_GRID_POSITION = "currentGridPosition";
+    public static final String CURRENT_VIDEO_POSITION = "currentVideoPosition";
+    public static final String CURRENT_REVIEW_POSITION = "currentReviewPosition";
+    public static final int FAVORITE_REQUEST_CODE = 123;
+    public static final String FAVORITE_MOVIE_ID = "favoriteMovieId";
+    public static final String MOVIE_CHANGED = "movieHasChanged";
 }

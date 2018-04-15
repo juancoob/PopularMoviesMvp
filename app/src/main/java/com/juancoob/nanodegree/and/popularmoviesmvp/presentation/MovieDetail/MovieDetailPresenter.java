@@ -37,6 +37,21 @@ public class MovieDetailPresenter extends AbstractPresenter implements IMovieDet
 
     @Override
     public void resume() {
+
+        if(mMovieDetailFragment.getMovieVideoList().size() == 0) {
+            fetchMovieVideos();
+        } else {
+            onVideosRetrieved(mMovieDetailFragment.getMovieVideoList());
+        }
+
+        if(mMovieDetailFragment.getMovieReviewList().size() == 0) {
+            fetchMovieReviews();
+        } else {
+            onReviewsRetrieved(mMovieDetailFragment.getMovieReviewList());
+        }
+    }
+
+    private void fetchMovieReviews() {
         FetchingMovieReviewsUseCase reviewsUseCase = new FetchingMovieReviewsUseCaseImpl(
                 mExecutor,
                 mMainThread,
@@ -45,7 +60,9 @@ public class MovieDetailPresenter extends AbstractPresenter implements IMovieDet
                 mMovieId);
 
         reviewsUseCase.execute();
+    }
 
+    private void fetchMovieVideos() {
         FetchingMovieVideosUseCase videosUseCase = new FetchingMovieVideosUseCaseImpl(
                 mExecutor,
                 mMainThread,
